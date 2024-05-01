@@ -446,7 +446,7 @@ class CrudProducts(ICrud):
     else:
         print("\n\n\033[1;4;97m🔴 No se encontró al cliente.\033[0m")
 
-    
+#hola
 def cargar_facturas():
     with open('ventas_python/archivos/invoices.json', 'r') as f:
         return json.load(f)
