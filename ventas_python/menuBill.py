@@ -7,7 +7,7 @@ from colorama import init, Fore, Style
 import msvcrt  
 import datetime
 
-
+from tabulate import tabulate
 from functools import reduce
 from company import Company
 from components import Menu, Valida
@@ -47,6 +47,33 @@ def message_decorator(func):
             else:
                 return result
     return wrapper
+
+def cargar_facturas():
+    with open('ventas_python/archivos/invoices.json', 'r') as f:
+        return json.load(f)
+
+def mostrar_factura(factura):
+    factura = factura.copy() 
+    print(tabulate([factura], headers="keys", tablefmt="pretty"))
+
+def mostrar_facturas(facturas):
+    total_acumulado = reduce(lambda a, b: a + b['total'], facturas, 0)
+    total_acumulado = round(total_acumulado, 2) 
+    num_facturas = len(facturas)
+    for factura in facturas:
+        factura = factura.copy()  
+    print(tabulate(facturas, headers="keys", tablefmt="pretty"))
+    print(f"\n\033[92m Total Acumulado \033[97m=> \033[0m {total_acumulado}")
+    print(f"\033[92m Cantidad de Facturas \033[97m=> \033[0m {num_facturas}")
+
+def buscar_factura(facturas, numero):
+    for factura in facturas:
+        if factura['factura'] == numero:
+            return factura
+    return None
+
+def ordenar_facturas(facturas, orden):
+    return sorted(facturas, key=lambda x: x['total'], reverse=(orden == 'max')) 
 
 class CrudClients(ICrud, ABC):
   @message_decorator
@@ -446,40 +473,6 @@ class CrudProducts(ICrud):
     else:
         print("\n\n\033[1;4;97m🔴 No se encontró al cliente.\033[0m")
 
-#hola
-def cargar_facturas():
-    with open('ventas_python/archivos/invoices.json', 'r') as f:
-        return json.load(f)
-
-def mostrar_factura(factura):
-    print(f"\033[92m\n    Factura N° \033[97m=> \033[0m {factura['factura']}")
-    print(f"\033[92m    Fecha \033[97m=> \033[0m {factura['Fecha']}")
-    print(f"\033[92m    Cliente \033[97m=> \033[0m {factura['cliente']}")
-    print(f"\033[92m    Subtotal \033[97m=> \033[0m {factura['subtotal']}")
-    print(f"\033[92m    Descuento \033[97m=> \033[0m {factura['descuento']}")
-    print(f"\033[92m    IVA \033[97m=> \033[0m {factura['iva']}")
-    print(f"\033[92m    Total \033[97m=> \033[0m {factura['total']}\n")
-    print("\033[92m     ▶️  Detalle: \033[0m")
-    for detalle in factura['detalle']:
-        print(f"\033[92m     Producto \033[97m=> \033[0m {detalle['poducto']}")
-        print(f"\033[92m     Precio \033[97m=> \033[0m {detalle['precio']}")
-        print(f"\033[92m     Cantidad \033[97m=> \033[0m {detalle['cantidad']}\n")
-
-
-
-def mostrar_facturas(facturas):
-    for factura in facturas:
-        mostrar_factura(factura)
-
-def buscar_factura(facturas, numero):
-    for factura in facturas:
-        if factura['factura'] == numero:
-            return factura
-    return None
-
-def ordenar_facturas(facturas, orden):
-    return sorted(facturas, key=lambda x: x['total'], reverse=(orden == 'max')) 
-
 class CrudSales(ICrud):
   def create(self):
     # cabecera de la venta
@@ -573,12 +566,9 @@ class CrudSales(ICrud):
     while True:
         borrarPantalla()
         print('\033[1m\033[4m\033[97mActualizar datos de la factura.\033[0m')
-        print()
-        fact = input("\033[92m Ingresar número de factura, para actualizar los datos \033[0m\033[97m=> \033[0m").strip()
+        fact = input("\n\033[92m Ingresar número de factura, para actualizar los datos \033[0m\033[97m=> \033[0m").strip()
         if ' ' in fact or not fact.isdigit() or len(fact) != 1:
-            print()
-            print()
-            print("\033[91m\033[4m🚨 ERROR: Incorrecto digite bien el número de la factura. --- 🚨 ERROR: Sin espacios en medio.\033[0m")
+            print("\n\n\033[91m\033[4m🚨 ERROR: Incorrecto digite bien el número de la factura. --- 🚨 ERROR: Sin espacios en medio.\033[0m")
             time.sleep(2)
             continue
     
@@ -589,8 +579,7 @@ class CrudSales(ICrud):
         if clients_data:
             factura_encontrada = clients_data[0]  
             
-            print()
-            print('\033c', end='')
+            print('\n\033c', end='')
             gotoxy(2,1);print(green_color+"██"*50+reset_color)
             gotoxy(30,2);print(blue_color+"Registro de Venta")
             gotoxy(17,3);print(blue_color+Company.get_business_name())
@@ -601,8 +590,8 @@ class CrudSales(ICrud):
             gotoxy(66,7);print(" Total   : ", factura_encontrada["total"])
             gotoxy(10,6);print("Cliente: ", factura_encontrada["cliente"])
             gotoxy(2,8);print(green_color+"██"*50+reset_color) 
-            print()            
-            input("\033[1m\033[4m\033[97mEnter si desea continuar => \033[0m\033[1m\033[4m\033[97m🚨 Datos que se van actualizar de la factura. ❗\033[0m")
+         
+            input("\n\033[1m\033[4m\033[97mEnter si desea continuar => \033[0m\033[1m\033[4m\033[97m🚨 Datos que se van actualizar de la factura. ❗\033[0m")
 
             validar = Valida()
             borrarPantalla()
@@ -766,45 +755,46 @@ class CrudSales(ICrud):
             break
                                 
   def consult(self):
-      facturas = cargar_facturas()
-      while True:
-          borrarPantalla()
-          print('\033[1m\033[4m\033[97mConsultar una factura o todas las facturas.\033[0m')
-          accion = input("\n\033[92m Presione Enter consultar unicamente una factura o Fac para todas las \033[0m\033[97m=> \033[0m").strip()
-          
-          if accion == "":
-              borrarPantalla()
-              print('\033[1m\033[4m\033[97mConsultar datos de la factura.\033[0m')
-              numero = input("\n\033[92m Ingresar el número de la factura \033[0m\033[97m=> \033[0m").strip()
-              if not numero.isdigit():
-                  print("\033[91m\033[4m🚨 ERROR: Incorrecto, digite bien el número de la factura. --- 🚨 ERROR: Sin espacios en medio.\033[0m")
-                  time.sleep(2)
-                  continue
-              else:
-                  factura = buscar_factura(facturas, int(numero))
-                  if factura is not None:
-                      mostrar_factura(factura)
-                  else:
-                      print("La factura no fue encontrada.")
-          elif accion == " ":
-              mostrar_facturas(facturas)
-          else:
-              print("\033[91m\033[4m🚨 ERROR: Acción no reconocida. Por favor, intente de nuevo.\033[0m")
-              time.sleep(2)
-              continue
-  
-          orden = input("\033[92m Escriba 'max' para ordenar las facturas de mayor a menor total, 'min' para ordenar de menor a mayor, o presione Escape para salir \033[0m\033[97m=> \033[0m").strip()
-          if orden in ['max', 'min']:
-              facturas = ordenar_facturas(facturas, orden)
-          elif orden == 'Escape':
-              break
-          else:
-              print("\033[91m\033[4m🚨 ERROR: Orden no reconocido. Por favor, intente de nuevo.\033[0m")
-              time.sleep(2)
-              continue
-  
-          input(f"\033[1m\033[97mPresione Enter para continuar => \033[0m")
-
+    facturas = cargar_facturas()
+    while True:
+        borrarPantalla()
+        print('\033[1m\033[4m\033[97mConsultar una factura o todas las facturas.\033[0m')
+        accion = input("\n\033[92m Presione Enter consultar unicamente una factura o Fac para todas las \033[0m\033[97m=> \033[0m").strip()
+        
+        if accion == "":
+            borrarPantalla()
+            print('\033[1m\033[4m\033[97mConsultar datos de la factura.\033[0m')
+            numero = input("\n\033[92m Ingresar el número de la factura \033[0m\033[97m=> \033[0m").strip()
+            if not numero.isdigit():
+                print("\033[91m\033[4m🚨 ERROR: Incorrecto, digite bien el número de la factura. --- 🚨 ERROR: Sin espacios en medio.\033[0m")
+                time.sleep(2)
+                continue
+            else:
+                factura = buscar_factura(facturas, int(numero))
+                if factura is not None:
+                    mostrar_factura(factura)
+                else:
+                    print("La factura no fue encontrada.")
+            input(f"\033[1m\033[97mPresione Enter para salir.\033[0m")
+            break
+        elif accion == "fac":
+            while True:
+                borrarPantalla()
+                print('\033[1m\033[4m\033[97mConsulta de todas las facturas.\033[0m')
+                print()
+                mostrar_facturas(facturas)
+                orden = input("\033[1m\033[4m\033[97m\n Max para > a < y Min para < a > => \033[0m").strip()
+                if orden in ['max', 'min']:
+                    facturas = ordenar_facturas(facturas, orden)
+                elif orden == 's':
+                    break
+                else:
+                    print("\033[91m\033[4m🚨 ERROR: Orden no reconocido. Por favor, intente de nuevo.\033[0m")
+                    time.sleep(2)
+        else:
+            print("\033[91m\033[4m🚨 ERROR: Acción no reconocida. Por favor, intente de nuevo.\033[0m")
+            time.sleep(2)
+            continue
 
 opc = ''
 while opc != '4':
