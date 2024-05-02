@@ -1,49 +1,33 @@
 [
     {
         "factura": 1,
-        "Fecha": "2024-04-27",
-        "cliente": "cliente: eduardo javier quinteros pacheco",
-        "subtotal": 1500.0,
-        "descuento": 150.0,
-        "iva": 162.0,
-        "total": 1512.0,
+        "Fecha": "2024-05-01",
+        "cliente": "daniela lesly rumazo chica",
+        "subtotal": 222000.0,
+        "descuento": 22200.0,
+        "iva": 23976.0,
+        "total": 223776.0,
         "detalle": [
             {
-                "poducto": "lavadora",
-                "precio": 300.0,
-                "cantidad": 5
+                "poducto": "mouse",
+                "precio": 400.0,
+                "cantidad": 555
             }
         ]
     },
     {
-        "factura": 4,
-        "Fecha": "2024-04-27",
-        "cliente": "eduardo javier quinteros pacheco",
-        "subtotal": 560.0,
-        "descuento": 56.0,
-        "iva": 60.48,
-        "total": 564.48,
+        "factura": 2,
+        "Fecha": "2024-05-01",
+        "cliente": "daniela lesly rumazo chica",
+        "subtotal": 1111000.0,
+        "descuento": 111100.0,
+        "iva": 119988.0,
+        "total": 1119888.0,
         "detalle": [
             {
                 "poducto": "televisor",
-                "precio": 560.0,
-                "cantidad": 1
-            }
-        ]
-    },
-    {
-        "factura": 5,
-        "Fecha": "2024-05-01",
-        "cliente": "vvvv vvvv vvvvv vvvvv",
-        "subtotal": 840.0,
-        "descuento": 84.0,
-        "iva": 90.72,
-        "total": 846.72,
-        "detalle": [
-            {
-                "poducto": "muebles",
-                "precio": 420.0,
-                "cantidad": 2
+                "precio": 500.0,
+                "cantidad": 2222
             }
         ]
     }

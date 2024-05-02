@@ -1,14 +1,14 @@
 [
     {
-        "dni": "7777777777",
-        "first_name": "xxxx xxxx",
-        "last_name": "xxxxxx xxxxx",
-        "valor": 10000
+        "dni": "0910203040",
+        "first_name": "eduardo javier",
+        "last_name": "quinteros pacheco",
+        "valor": 0.1
     },
     {
-        "dni": "0940126212",
-        "first_name": "vvvv vvvv",
-        "last_name": "vvvvv vvvvv",
-        "valor": 0.1
+        "dni": "0950607080",
+        "first_name": "daniela lesly",
+        "last_name": "rumazo chica",
+        "valor": 15000.0
     }
 ]

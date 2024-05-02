@@ -137,11 +137,7 @@ class JsonFile:
       except (FileNotFoundError, json.JSONDecodeError):
           with open(self.file_path, 'w') as file:
               json.dump([data], file)
-
-
-
-
-
+              
 if __name__ == '__main__':
 
   regular_cli1 = RegularClient()  # instancia la clase RegularClient en el objeto regular_cli1 y ejecuta el constructor
